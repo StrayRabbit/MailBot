@@ -1,0 +1,131 @@
+<UserControl x:Class="MailBot.App.Views.Pages.AccountsPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:conv="clr-namespace:MailBot.App.Converters">
+    <UserControl.Resources>
+        <conv:IsoDateConverter x:Key="IsoDate" />
+        <conv:StatusToBrushConverter x:Key="StatusBrush" />
+        <conv:StatusToTextConverter x:Key="StatusText" />
+        <conv:BoolToTextConverter x:Key="BoolText" />
+    </UserControl.Resources>
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="8">
+            <!-- 发件账号 -->
+            <GroupBox Header="▼ 发件账号">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <DataGrid Grid.Row="0" x:Name="SendersList"
+                              ItemsSource="{Binding Senders.Senders}"
+                              AutoGenerateColumns="False"
+                              IsReadOnly="True"
+                              SelectionMode="Single"
+                              RowHeaderWidth="0"
+                              EnableRowVirtualization="True"
+                              VirtualizingPanel.IsVirtualizing="True"
+                              VirtualizingPanel.VirtualizationMode="Recycling"
+                              VirtualizingPanel.ScrollUnit="Pixel"
+                              MinHeight="160" MaxHeight="320"
+                              Margin="0,0,0,8">
+                        <DataGrid.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="编辑已发…" Click="EditSentToday_Click" />
+                            </ContextMenu>
+                        </DataGrid.ContextMenu>
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="邮箱" Binding="{Binding Email}" Width="*" />
+                            <!-- 状态：用色块 + 中文标签，比纯文字更直观 -->
+                            <DataGridTemplateColumn Header="状态" Width="80" SortMemberPath="Status">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                            <Ellipse Width="10" Height="10" Margin="0,0,6,0"
+                                                     Fill="{Binding Status, Converter={StaticResource StatusBrush}}" />
+                                            <TextBlock Text="{Binding Status, Converter={StaticResource StatusText}}" />
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTextColumn Header="配额" Width="80"
+                                                Binding="{Binding DailyQuota}" />
+                            <DataGridTemplateColumn Header="已发/配额" Width="90" SortMemberPath="SentToday">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock>
+                                            <Run Text="{Binding SentToday, Mode=OneWay}" />
+                                            <Run Text=" / " />
+                                            <Run Text="{Binding DailyQuota, Mode=OneWay}" />
+                                        </TextBlock>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTextColumn Header="连续失败" Binding="{Binding ConsecutiveFailures}" Width="80" />
+                            <DataGridTemplateColumn Header="冷却到期" Width="140" SortMemberPath="CooldownUntil">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding CooldownUntil, Converter={StaticResource IsoDate}}" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+
+                    <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,6,0,0">
+                        <Button Content="+ 添加账号" Margin="0,0,4,0" Click="AddSender_Click" />
+                        <Button Content="编辑" Margin="0,0,4,0" Click="EditSender_Click" />
+                        <Button Content="解除封禁" Margin="0,0,4,0" Click="UnbanSender_Click" />
+                        <Button Style="{StaticResource Button.Danger}" Content="删除" Margin="0,0,0,0" Click="DeleteSender_Click" />
+                    </StackPanel>
+                </Grid>
+            </GroupBox>
+
+            <!-- 验证邮箱 -->
+            <GroupBox Header="▼ 验证邮箱 (送达验证)">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <DataGrid Grid.Row="0" x:Name="VerifiersList"
+                              ItemsSource="{Binding Verifiers.Verifiers}"
+                              AutoGenerateColumns="False"
+                              IsReadOnly="True"
+                              SelectionMode="Single"
+                              RowHeaderWidth="0"
+                              EnableRowVirtualization="True"
+                              VirtualizingPanel.IsVirtualizing="True"
+                              VirtualizingPanel.VirtualizationMode="Recycling"
+                              VirtualizingPanel.ScrollUnit="Pixel"
+                              MinHeight="160" MaxHeight="320"
+                              Margin="0,0,0,8">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="邮箱" Binding="{Binding Email}" Width="*" />
+                            <DataGridTemplateColumn Header="启用" Width="70" SortMemberPath="Enabled">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Enabled, Converter={StaticResource BoolText}}" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTextColumn Header="IMAP 主机" Binding="{Binding ImapHost}" Width="160" />
+                            <DataGridTextColumn Header="端口" Binding="{Binding ImapPort}" Width="60" />
+                            <DataGridTextColumn Header="SSL" Binding="{Binding UseSsl}" Width="50" />
+                            <DataGridTextColumn Header="用户名" Binding="{Binding Username}" Width="160" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+
+                    <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,6,0,0">
+                        <Button Content="+ 添加验证邮箱" Margin="0,0,4,0" Click="AddVerifier_Click" />
+                        <Button Content="编辑" Margin="0,0,4,0" Click="EditVerifier_Click" />
+                        <Button Content="删除" Click="DeleteVerifier_Click" />
+                    </StackPanel>
+                </Grid>
+            </GroupBox>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

@@ -1,0 +1,31 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CsvHelper" Version="33.1.0" />
+    <PackageReference Include="EPPlus" Version="8.7.1" />
+    <PackageReference Include="MailKit" Version="4.18.0" />
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="8.0.10" />
+    <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="10.0.12" />
+  </ItemGroup>
+
+  <!-- 默认配置：嵌入到 dll 作为出厂默认；外部文件可覆盖。 -->
+  <ItemGroup>
+    <EmbeddedResource Include="Storage/mailbot.config.json" />
+    <None Include="Storage/mailbot.config.json">
+      <!-- 复制到 MailBot.exe 同目录（去掉 Storage/ 前缀）：用户可直观看到，也可用记事本编辑。 -->
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <TargetPath>mailbot.config.json</TargetPath>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="MailBot.Tests" />
+  </ItemGroup>
+
+</Project>

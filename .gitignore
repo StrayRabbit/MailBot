@@ -1,0 +1,51 @@
+# Build output
+bin/
+obj/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+*.dll
+*.exe
+*.pdb
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.userprefs
+.vscode/
+.idea/
+
+# Runtime data — the SQLite DB, logs and attachment copies live next to it
+# at runtime and hold real recipient data and DPAPI-encrypted credentials.
+*.db
+*.db-shm
+*.db-wal
+logs/
+attachments/
+mailbot.config.local.json
+
+# Test output
+[Tt]est[Rr]esult*/
+*.trx
+*.coverage
+coverage*.json
+coverage*.xml
+coverage*.info
+
+# NuGet
+*.nupkg
+*.snupkg
+packages/
+.nuget/
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+Desktop.ini
+*~
+*.swp
+*.bak

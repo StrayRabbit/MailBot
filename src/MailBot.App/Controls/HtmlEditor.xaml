@@ -1,0 +1,16 @@
+<UserControl x:Class="MailBot.App.Controls.HtmlEditor"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <DockPanel>
+        <ToolBarTray DockPanel.Dock="Top">
+            <ToolBar>
+                <Button Content="B" FontWeight="Bold" Click="Bold_Click" Width="28" />
+                <Button Content="I" FontStyle="Italic" Click="Italic_Click" Width="28" />
+                <Button Content="U" Click="Underline_Click" Width="28" />
+                <Separator />
+                <Button Content="🔗 超链接" Click="Link_Click" />
+            </ToolBar>
+        </ToolBarTray>
+        <WebBrowser x:Name="Browser" />
+    </DockPanel>
+</UserControl>

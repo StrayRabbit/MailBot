@@ -1,0 +1,48 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ApplicationIcon>app.ico</ApplicationIcon>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <StartupObject>MailBot.App.App</StartupObject>
+  </PropertyGroup>
+
+  <!--
+    WPF + WinForms 同时启用后，多个常用类型在两个命名空间都存在。
+    用 Using 别名把 WPF/Microsoft.Win32 类型锁定为默认，避免 CS0104 模糊引用。
+  -->
+  <ItemGroup>
+    <Using Include="System.Windows.Application" Alias="Application" />
+    <Using Include="System.Windows.Controls.UserControl" Alias="UserControl" />
+    <Using Include="System.Windows.Controls.ListBox" Alias="ListBox" />
+    <Using Include="System.Windows.Controls.CheckBox" Alias="CheckBox" />
+    <Using Include="System.Windows.MessageBox" Alias="MessageBox" />
+    <Using Include="Microsoft.Win32.OpenFileDialog" Alias="OpenFileDialog" />
+    <Using Include="Microsoft.Win32.SaveFileDialog" Alias="SaveFileDialog" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
+    <!-- 监控页"最近 30 天每日发送批次"柱状图，仅 TFM 为 net8.0-windows10.0.19041，被 .NET 10 兼容运行。 -->
+    <PackageReference Include="LiveChartsCore.SkiaSharpView.WPF" Version="2.0.5" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MailBot.Core\MailBot.Core.csproj" />
+  </ItemGroup>
+
+  <!-- 图标：ApplicationIcon 已嵌入 EXE；运行时托盘另需一份本地副本。 -->
+  <ItemGroup>
+    <None Update="app.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

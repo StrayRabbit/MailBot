@@ -1,0 +1,121 @@
+<Window x:Class="MailBot.App.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:MailBot.App.ViewModels"
+        Title="MailBot 批量邮件发送" Width="1280" Height="780"
+        WindowStartupLocation="CenterScreen"
+        Background="{StaticResource Brush_Surface_Alt}">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- 顶部工具栏：开始（Primary 蓝底）/ 暂停（默认）/ 停止（Danger 红边）-->
+        <Border Grid.Row="0" Background="{StaticResource Brush_Surface}"
+                BorderBrush="{StaticResource Brush_Border_Default}"
+                BorderThickness="0,0,0,1"
+                Padding="16,10">
+            <StackPanel Orientation="Horizontal">
+                <!-- 开始：Primary 蓝底，图标白色 -->
+                <Button Style="{StaticResource Button.Primary}" Width="92" Margin="0,0,8,0"
+                        Command="{Binding StartCommand}">
+                    <StackPanel Orientation="Horizontal">
+                        <Path Width="11" Height="11" Margin="0,0,6,0" Stretch="Uniform"
+                              Fill="{StaticResource Brush_Text_OnAccent}" VerticalAlignment="Center"
+                              Data="M 2,1 L 11,7 L 2,13 Z" />
+                        <TextBlock Text="开始" VerticalAlignment="Center" />
+                    </StackPanel>
+                </Button>
+
+                <!-- 暂停：默认风格（白底+边框），图标灰 -->
+                <Button Width="92" Margin="0,0,8,0" Command="{Binding PauseCommand}"
+                        IsEnabled="{Binding IsEngineRunning}">
+                    <StackPanel Orientation="Horizontal">
+                        <Path Width="11" Height="11" Margin="0,0,6,0" Stretch="Uniform"
+                              Fill="{StaticResource Brush_Text_Secondary}" VerticalAlignment="Center"
+                              Data="M 3,1 L 6,1 L 6,13 L 3,13 Z M 8,1 L 11,1 L 11,13 L 8,13 Z" />
+                        <TextBlock Text="暂停" VerticalAlignment="Center" />
+                    </StackPanel>
+                </Button>
+
+                <!-- 停止：Danger 红边 -->
+                <Button Style="{StaticResource Button.Danger}" Width="92" Margin="0,0,24,0"
+                        Command="{Binding StopCommand}"
+                        IsEnabled="{Binding IsEngineRunning}">
+                    <StackPanel Orientation="Horizontal">
+                        <Path Width="11" Height="11" Margin="0,0,6,0" Stretch="Uniform"
+                              Fill="{StaticResource Brush_Danger}" VerticalAlignment="Center"
+                              Data="M 2,2 L 12,2 L 12,12 L 2,12 Z" />
+                        <TextBlock Text="停止" VerticalAlignment="Center" />
+                    </StackPanel>
+                </Button>
+
+                <TextBlock Text="当前账号:" VerticalAlignment="Center" Margin="0,0,6,0"
+                           Foreground="{StaticResource Brush_Text_Secondary}"/>
+                <TextBlock Text="{Binding Monitor.CurrentSenderEmail}" VerticalAlignment="Center"
+                           FontWeight="SemiBold" Margin="0,0,16,0"/>
+                <TextBlock Text="今日已发:" VerticalAlignment="Center" Margin="0,0,6,0"
+                           Foreground="{StaticResource Brush_Text_Secondary}"/>
+                <TextBlock Text="{Binding Monitor.TodaySentTotal, Mode=OneWay}"
+                           VerticalAlignment="Center" Margin="0,0,2,0" FontWeight="SemiBold"/>
+            </StackPanel>
+        </Border>
+
+        <!-- 主区域：左侧导航 / 右侧页面 -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <!-- 侧栏：图标 + 文字，144px 宽 -->
+                <ColumnDefinition Width="144"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- 左侧导航（图标 + 文字 + 左侧 3px 选中竖条）-->
+            <Border Grid.Column="0" Background="{StaticResource Brush_Surface_Sidebar}"
+                    BorderBrush="{StaticResource Brush_Border_Default}"
+                    BorderThickness="0,0,1,0">
+                <ListBox x:Name="NavList"
+                         ItemsSource="{Binding Pages}"
+                         SelectedIndex="{Binding SelectedPageIndex, Mode=TwoWay}"
+                         ItemContainerStyle="{StaticResource NavItemContainerStyle}"
+                         BorderThickness="0"
+                         Background="Transparent"
+                         HorizontalContentAlignment="Stretch">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate DataType="{x:Type vm:NavItem}">
+                            <!-- 图标 + 标签；Tooltip 仍显示完整 Label -->
+                            <StackPanel Orientation="Horizontal"
+                                        VerticalAlignment="Center">
+                                <Path Width="20" Height="20" Stretch="Uniform"
+                                      HorizontalAlignment="Left" VerticalAlignment="Center"
+                                      Fill="{Binding RelativeSource={RelativeSource AncestorType=ListBoxItem}, Path=Foreground}"
+                                      ToolTip="{Binding Label}"
+                                      Data="{Binding IconData}"/>
+                                <TextBlock Text="{Binding Label}"
+                                           Margin="10,0,0,0"
+                                           VerticalAlignment="Center"
+                                           FontSize="13"
+                                           Foreground="{Binding RelativeSource={RelativeSource AncestorType=ListBoxItem}, Path=Foreground}"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </Border>
+
+            <!-- 右侧页面容器 -->
+            <ContentControl Grid.Column="1" x:Name="PageHost"
+                            Background="{StaticResource Brush_Surface_Alt}"/>
+        </Grid>
+
+        <!-- 底部状态栏 -->
+        <Border Grid.Row="2" Background="{StaticResource Brush_Surface}"
+                BorderBrush="{StaticResource Brush_Border_Default}"
+                BorderThickness="0,1,0,0"
+                Padding="16,6">
+            <TextBlock Text="{Binding StatusBar}"
+                       Foreground="{StaticResource Brush_Text_Secondary}"/>
+        </Border>
+    </Grid>
+</Window>
